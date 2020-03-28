@@ -1,0 +1,31 @@
+{
+    "name": "chesszebra/forsyth-edwards-notation",
+    "description": "A PHP library that parses Forsyth-Edwards Notation (FEN) values.",
+    "license": "MIT",
+    "type": "library",
+    "require": {
+        "php": "^7.2"
+    },
+    "require-dev": {
+        "chesszebra/coding-standards": "dev-master",
+        "phpstan/extension-installer": "^1.0",
+        "phpstan/phpstan": "^0.12.18",
+        "phpstan/phpstan-strict-rules": "^0.12.2",
+        "phpunit/phpunit": "^8.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "ChessZebra\\ForsythEdwardsNotation\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ChessZebra\\ForsythEdwardsNotation\\": "tests/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "process-timeout": 5000,
+        "sort-packages": true
+    }
+}
