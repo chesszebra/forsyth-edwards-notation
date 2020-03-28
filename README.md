@@ -52,8 +52,8 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 [ico-travis]: https://img.shields.io/travis/chesszebra/forsyth-edwards-notation/master.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/chesszebra/forsyth-edwards-notation.svg?style=flat-square
 
-[link-packagist]: https://packagist.org/packages/chesszebra/portable-game-notation
-[link-travis]: https://travis-ci.org/chesszebra/portable-game-notation
-[link-downloads]: https://packagist.org/packages/chesszebra/portable-game-notation
+[link-packagist]: https://packagist.org/packages/chesszebra/forsyth-edwards-notation
+[link-travis]: https://travis-ci.org/chesszebra/forsyth-edwards-notation
+[link-downloads]: https://packagist.org/packages/chesszebra/forsyth-edwards-notation
 [link-contributors]: ../../contributors
 [link-hackerone]: https://hackerone.com/chesszebra
