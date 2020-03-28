@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ChessZebra\ForsythEdwardsNotation;
 
 use ChessZebra\ForsythEdwardsNotation\Exception\InvalidFenException;
+use function count;
+use function explode;
 
 /**
  * The representation of a chessboard in the Forsyth–Edwards Notation (FEN).
@@ -75,7 +77,7 @@ final class FenNotation
 
         $this->board = $fields[0];
         $this->turn = $fields[1];
-        $this->enPassantTargetSquare = $fields[3] === '-' ? null : (string)$fields[3];
+        $this->enPassantTargetSquare = $fields[3] === '-' ? null : $fields[3];
         $this->halfMoveClock = (int)$fields[4];
         $this->fullMoveNumber = (int)$fields[5];
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ChessZebra\ForsythEdwardsNotation;
 
 use ChessZebra\ForsythEdwardsNotation\Exception\InvalidCastlingAvailabilityException;
+use function strlen;
 
 /**
  * A value that represents the type of castling that is possible.
@@ -166,19 +167,19 @@ final class CastlingAvailability
 
             switch ($value) {
                 case 'k':
-                    $result |= CastlingAvailability::BLACK_KING_SIDE;
+                    $result |= self::BLACK_KING_SIDE;
                     break;
 
                 case 'q':
-                    $result |= CastlingAvailability::BLACK_QUEEN_SIDE;
+                    $result |= self::BLACK_QUEEN_SIDE;
                     break;
 
                 case 'K':
-                    $result |= CastlingAvailability::WHITE_KING_SIDE;
+                    $result |= self::WHITE_KING_SIDE;
                     break;
 
                 case 'Q':
-                    $result |= CastlingAvailability::WHITE_QUEEN_SIDE;
+                    $result |= self::WHITE_QUEEN_SIDE;
                     break;
 
                 case '-':
