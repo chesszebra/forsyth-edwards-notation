@@ -35,6 +35,18 @@ $notation = new FenNotation('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq 
 echo $notation->toString(); // or cast it: (string)$notation
 ```
 
+### Validating a FEN
+
+```php
+use ChessZebra\ForsythEdwardsNotation\Validator;
+
+$validator = new Validator();
+
+$validationResult = $validator->validate('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
+
+// $validationResult is a ValidationResult constant. 
+```
+
 ## Contributing
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) and [CONDUCT](CONDUCT.md) for details.
