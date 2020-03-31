@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace ChessZebra\ForsythEdwardsNotation;
 
-use ChessZebra\ForsythEdwardsNotation\Exception\InvalidCastlingAvailabilityException;
 use ChessZebra\ForsythEdwardsNotation\Exception\InvalidFenException;
 use PHPUnit\Framework\TestCase;
 
 final class FenNotationTest extends TestCase
 {
     /**
-     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::toString
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::__construct
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::validate
      */
-    public function testToString(): void
+    public function testValidFenDoesntThrowException(): void
     {
         // Arrange
         $fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1';
@@ -23,42 +23,13 @@ final class FenNotationTest extends TestCase
 
         // Assert
         static::assertSame($fen, $notation->toString());
-    }
-
-    /**
-     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::toString
-     */
-    public function testToStringWithEnPassant(): void
-    {
-        // Arrange
-        $fen = 'rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2';
-
-        // Act
-        $notation = new FenNotation($fen);
-
-        // Assert
-        static::assertSame($fen, $notation->toString());
-    }
-
-    /**
-     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::__toString
-     */
-    public function testToStringViaCast(): void
-    {
-        // Arrange
-        $fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1';
-
-        // Act
-        $notation = new FenNotation($fen);
-
-        // Assert
-        static::assertSame($fen, (string)$notation);
     }
 
     /**
      * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::__construct
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::validate
      */
-    public function testReadInvalidFenThrowsException(): void
+    public function testEmptyFenThrowsException(): void
     {
         // Assert
         $this->expectException(InvalidFenException::class);
@@ -72,6 +43,55 @@ final class FenNotationTest extends TestCase
 
     /**
      * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::__construct
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::validate
+     */
+    public function testInvalidEnPassantMoveThrowsException(): void
+    {
+        // Assert
+        $this->expectException(InvalidFenException::class);
+
+        // Arrange
+        $fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq a3 0 1';
+
+        // Act
+        new FenNotation($fen);
+    }
+
+    /**
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::__construct
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::validate
+     */
+    public function testInvalidEnPassantSquareThrowsException(): void
+    {
+        // Assert
+        $this->expectException(InvalidFenException::class);
+
+        // Arrange
+        $fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq a1 0 1';
+
+        // Act
+        new FenNotation($fen);
+    }
+
+    /**
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::__construct
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::validate
+     */
+    public function testInvalidCaslingMoveThrowsException(): void
+    {
+        // Assert
+        $this->expectException(InvalidFenException::class);
+
+        // Arrange
+        $fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w g - 0 1';
+
+        // Act
+        new FenNotation($fen);
+    }
+
+    /**
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::__construct
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::validate
      */
     public function testInvalidTurnThrowsException(): void
     {
@@ -79,10 +99,138 @@ final class FenNotationTest extends TestCase
         $this->expectException(InvalidFenException::class);
 
         // Arrange
-        $fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR r KQkq - 0 1';
+        $fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR a KQkq - 0 1';
 
         // Act
         new FenNotation($fen);
+    }
+
+    /**
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::__construct
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::validate
+     */
+    public function testInvalidHalfCounterThrowsException(): void
+    {
+        // Assert
+        $this->expectException(InvalidFenException::class);
+
+        // Arrange
+        $fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - a 1';
+
+        // Act
+        new FenNotation($fen);
+    }
+
+    /**
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::__construct
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::validate
+     */
+    public function testInvalidMoveNumberThrowsException(): void
+    {
+        // Assert
+        $this->expectException(InvalidFenException::class);
+
+        // Arrange
+        $fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0';
+
+        // Act
+        new FenNotation($fen);
+    }
+
+    /**
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::__construct
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::validate
+     */
+    public function testInvalidPieceThrowsException(): void
+    {
+        // Assert
+        $this->expectException(InvalidFenException::class);
+
+        // Arrange
+        $fen = 'rnbqkbnr/ppppgppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+        // Act
+        new FenNotation($fen);
+    }
+
+    /**
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::__construct
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::validate
+     */
+    public function testInvalidPieceRowThrowsException(): void
+    {
+        // Assert
+        $this->expectException(InvalidFenException::class);
+
+        // Arrange
+        $fen = 'rnbqkbnr/ppppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+        // Act
+        new FenNotation($fen);
+    }
+
+    /**
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::__construct
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::validate
+     */
+    public function testInvalidPieceRowsThrowsException(): void
+    {
+        // Assert
+        $this->expectException(InvalidFenException::class);
+
+        // Arrange
+        $fen = 'rnbqkbnr/ppppgppp/8/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+        // Act
+        new FenNotation($fen);
+    }
+
+    /**
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::__construct
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::getPiecePlacement
+     */
+    public function testGetPiecePlacement(): void
+    {
+        // Arrange
+        $fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+        $notation = new FenNotation($fen);
+
+        // Act
+        $result = $notation->getPiecePlacement();
+
+        // Assert
+        static::assertSame('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR', $result);
+    }
+
+    /**
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::__construct
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::getPiecePlacementRows
+     */
+    public function testGetPiecePlacementRows(): void
+    {
+        // Arrange
+        $fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+        $notation = new FenNotation($fen);
+
+        // Act
+        $result = $notation->getPiecePlacementRows();
+
+        // Assert
+        static::assertSame(
+            [
+                'rnbqkbnr',
+                'pppppppp',
+                '8',
+                '8',
+                '8',
+                '8',
+                'PPPPPPPP',
+                'RNBQKBNR',
+            ],
+            $result
+        );
     }
 
     /**
@@ -123,31 +271,13 @@ final class FenNotationTest extends TestCase
     public function testInvalidCastlingAvailabilityThrowsException(): void
     {
         // Assert
-        $this->expectException(InvalidCastlingAvailabilityException::class);
+        $this->expectException(InvalidFenException::class);
 
         // Arrange
         $fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkqR - 0 1';
 
         // Act
         new FenNotation($fen);
-    }
-
-    /**
-     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::__construct
-     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::getBoard
-     */
-    public function testGetBoard(): void
-    {
-        // Arrange
-        $fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
-
-        $notation = new FenNotation($fen);
-
-        // Act
-        $result = $notation->getBoard();
-
-        // Assert
-        static::assertSame('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR', $result);
     }
 
     /**
@@ -280,5 +410,86 @@ final class FenNotationTest extends TestCase
 
         // Assert
         static::assertSame(2, $result);
+    }
+
+    /**
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::toExtendedPositionDescription
+     */
+    public function testToExtendedPositionDescription(): void
+    {
+        // Arrange
+        $fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1';
+
+        // Act
+        $notation = new FenNotation($fen);
+
+        // Assert
+        static::assertSame(
+            'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq',
+            $notation->toExtendedPositionDescription()
+        );
+    }
+
+    /**
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::toExtendedPositionDescription
+     */
+    public function testToExtendedPositionDescriptionWithEnPassant(): void
+    {
+        // Arrange
+        $fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq a6 0 1';
+
+        // Act
+        $notation = new FenNotation($fen);
+
+        // Assert
+        static::assertSame(
+            'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq a6',
+            $notation->toExtendedPositionDescription()
+        );
+    }
+
+    /**
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::toString
+     */
+    public function testToString(): void
+    {
+        // Arrange
+        $fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1';
+
+        // Act
+        $notation = new FenNotation($fen);
+
+        // Assert
+        static::assertSame($fen, $notation->toString());
+    }
+
+    /**
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::toString
+     */
+    public function testToStringWithEnPassant(): void
+    {
+        // Arrange
+        $fen = 'rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2';
+
+        // Act
+        $notation = new FenNotation($fen);
+
+        // Assert
+        static::assertSame($fen, $notation->toString());
+    }
+
+    /**
+     * @covers \ChessZebra\ForsythEdwardsNotation\FenNotation::__toString
+     */
+    public function testToStringViaCast(): void
+    {
+        // Arrange
+        $fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1';
+
+        // Act
+        $notation = new FenNotation($fen);
+
+        // Assert
+        static::assertSame($fen, (string)$notation);
     }
 }

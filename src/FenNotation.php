@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ChessZebra\ForsythEdwardsNotation;
 
 use ChessZebra\ForsythEdwardsNotation\Exception\InvalidFenException;
-use function count;
 use function explode;
 
 /**
@@ -17,11 +16,11 @@ final class FenNotation
     public const DEFAULT_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
     /**
-     * The board values.
+     * The places of the pieces.
      *
      * @var string
      */
-    private $board;
+    private $piecePlacement;
 
     /**
      * An indication whether its black or white's turn.
@@ -70,27 +69,67 @@ final class FenNotation
 
     public function __construct(string $fen)
     {
-        $fields = explode(' ', $fen);
-        if (count($fields) !== 6) {
-            throw InvalidFenException::incorrectFieldCount($fields);
-        }
+        $this->validate($fen);
 
-        $this->board = $fields[0];
+        $fields = explode(' ', $fen);
+
+        $this->piecePlacement = $fields[0];
         $this->turn = $fields[1];
         $this->enPassantTargetSquare = $fields[3] === '-' ? null : $fields[3];
         $this->halfMoveClock = (int)$fields[4];
         $this->fullMoveNumber = (int)$fields[5];
-
-        if ($this->turn !== 'w' && $this->turn !== 'b') {
-            throw InvalidFenException::invalidTurn($this->turn);
-        }
-
         $this->castlingAvailability = CastlingAvailability::parseCastlingAvailability($fields[2]);
     }
 
-    public function getBoard(): string
+    private function validate(string $fen): void
     {
-        return $this->board;
+        $validator = new Validator();
+
+        switch ($validator->validate($fen)) {
+            case ValidationResult::VALID:
+                break;
+
+            case ValidationResult::EN_PASSANT_INVALID_MOVE:
+                throw InvalidFenException::enPassantIllegal($fen);
+            case ValidationResult::EN_PASSANT_INVALID_SQUARE:
+                throw InvalidFenException::enPassantInvalidSquare($fen);
+            case ValidationResult::FIELD_COUNT_TOO_LARGE:
+            case ValidationResult::FIELD_COUNT_TOO_SMALL:
+                throw InvalidFenException::incorrectFieldCount($fen);
+            case ValidationResult::INVALID_CASTLING_PIECE:
+                throw InvalidFenException::invalidCastlingPiece($fen);
+            case ValidationResult::INVALID_TURN:
+                throw InvalidFenException::invalidTurn($fen);
+            case ValidationResult::HALFMOVE_COUNTER_NAN:
+                throw InvalidFenException::wrongHalfMoveCounter($fen);
+            case ValidationResult::MOVE_NUMBER_NAN:
+            case ValidationResult::MOVE_NUMBER_POSITIVE:
+                throw InvalidFenException::wrongMoveNumber($fen);
+            case ValidationResult::PIECE_CONSECUTIVE_NUMBERS:
+            case ValidationResult::PIECE_INVALID:
+                throw InvalidFenException::invalidPiecePlacement($fen);
+            case ValidationResult::PIECE_ROW_TOO_LARGE:
+            case ValidationResult::PIECE_ROW_TOO_SMALL:
+                throw InvalidFenException::incorrectPiecePlacementRowLength($fen);
+            case ValidationResult::PIECE_NOT_ENOUGH_ROWS:
+            case ValidationResult::PIECE_TOO_MANY_ROWS:
+                throw InvalidFenException::incorrectPiecePlacementRowsLength($fen);
+            default:
+                throw InvalidFenException::unepectedError($fen); // @codeCoverageIgnore
+        }
+    }
+
+    public function getPiecePlacement(): string
+    {
+        return $this->piecePlacement;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getPiecePlacementRows(): array
+    {
+        return explode('/', $this->piecePlacement);
     }
 
     public function isBlacksTurn(): bool
@@ -138,9 +177,22 @@ final class FenNotation
         return $this->fullMoveNumber;
     }
 
+    public function toExtendedPositionDescription(): string
+    {
+        $result = $this->piecePlacement;
+        $result .= ' ' . $this->turn;
+        $result .= ' ' . $this->castlingAvailability->toString();
+
+        if ($this->enPassantTargetSquare !== null) {
+            $result .= ' ' . $this->enPassantTargetSquare;
+        }
+
+        return $result;
+    }
+
     public function toString(): string
     {
-        $result = $this->board;
+        $result = $this->piecePlacement;
         $result .= ' ' . $this->turn;
         $result .= ' ' . $this->castlingAvailability->toString();
 
