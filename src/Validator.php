@@ -67,15 +67,15 @@ final class Validator
             $previousWasNumber = false;
 
             for ($k = 0; $k < strlen($rows[$i]); ++$k) {
-                if (ctype_digit($rows[$i]{$k})) {
+                if (ctype_digit($rows[$i][$k])) {
                     if ($previousWasNumber) {
                         return ValidationResult::PIECE_CONSECUTIVE_NUMBERS;
                     }
 
-                    $sumFields += intval($rows[$i]{$k}, 10);
+                    $sumFields += intval($rows[$i][$k], 10);
                     $previousWasNumber = true;
                 } else {
-                    if (strpos(self::SYMBOLS, $rows[$i]{$k}) === false) {
+                    if (strpos(self::SYMBOLS, $rows[$i][$k]) === false) {
                         return ValidationResult::PIECE_INVALID;
                     }
 
@@ -94,8 +94,12 @@ final class Validator
         }
 
         if ($tokens[FenFields::EN_PASSANT] !== '-') {
-            if (($tokens[FenFields::EN_PASSANT]{1} === '3' && $tokens[FenFields::TURN] === 'w') ||
-                ($tokens[FenFields::EN_PASSANT]{1} === '6' && $tokens[FenFields::TURN] === 'b')) {
+            $enPassant = $tokens[FenFields::EN_PASSANT];
+
+            if (
+                ($enPassant[1] === '3' && $tokens[FenFields::TURN] === 'w') ||
+                ($enPassant[1] === '6' && $tokens[FenFields::TURN] === 'b')
+            ) {
                 return ValidationResult::EN_PASSANT_INVALID_MOVE;
             }
         }

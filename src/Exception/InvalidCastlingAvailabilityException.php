@@ -6,6 +6,7 @@ namespace ChessZebra\ForsythEdwardsNotation\Exception;
 
 use RuntimeException;
 use Throwable;
+
 use function sprintf;
 
 final class InvalidCastlingAvailabilityException extends RuntimeException // phpcs:ignore

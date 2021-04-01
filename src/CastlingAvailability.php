@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ChessZebra\ForsythEdwardsNotation;
 
 use ChessZebra\ForsythEdwardsNotation\Exception\InvalidCastlingAvailabilityException;
+
 use function strlen;
 
 /**
@@ -44,10 +45,8 @@ final class CastlingAvailability
 
     /**
      * The bitwise value that represents the castling availability.
-     *
-     * @var int
      */
-    private $value;
+    private int $value;
 
     /**
      * Initializes a new instance of this class.

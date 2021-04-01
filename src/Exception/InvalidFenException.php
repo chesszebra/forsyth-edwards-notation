@@ -6,6 +6,7 @@ namespace ChessZebra\ForsythEdwardsNotation\Exception;
 
 use RuntimeException;
 use Throwable;
+
 use function count;
 use function explode;
 use function sprintf;
